@@ -15,6 +15,7 @@ import wandb
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", default='train', type=str)
+parser.add_argument('--data_path', type=str, default='./')
 parser.add_argument("--dataset", default='resisc45', type=str,
                     help='c100 or imagenet or imagenet-small or stanfordcars or food101 or flowers-102 or oxford-iiit-pet or caltech101 or caltech256 or resisc45')
 parser.add_argument("--device", default='cuda', type=str)
@@ -185,6 +186,8 @@ def main():
         if args.mode=='train':
             train_loader = DataLoader(data_train, batch_size=args.batch, shuffle=True, num_workers=args.num_workers)
         val_loader = DataLoader(data_val, batch_size=args.val_batch, shuffle=True, num_workers=args.num_workers)
+    
+    # 실행  
     elif args.dataset=='resisc45':
         total_img_num = 18900
         args.num_classes = 45
@@ -195,9 +198,9 @@ def main():
         else:
             transform = None
         if args.mode=='train':
-            data_train = datasets.RESISC45(root='/home/hyukju/dataset/resisc45/', split='train', transforms=transform, download=True)
+            data_train = datasets.RESISC45(root=args.data_path, split='train', transforms=transform, download=True)
             train_loader = DataLoader(data_train, batch_size=args.batch, shuffle=True, num_workers=args.num_workers)
-        data_val =  datasets.RESISC45(root='/home/hyukju/dataset/resisc45/', split='test', transforms=None, download=True)
+        data_val =  datasets.RESISC45(root=args.data_path, split='test', transforms=None, download=True)
         val_loader = DataLoader(data_val, batch_size=args.val_batch, shuffle=True, num_workers=args.num_workers)
     
     experiment_name = f"{args.model_name}_batch:{args.batch}_lr:{args.lr}_wd:{args.weight_decay}_dropout:{args.dropout}_warmup:{args.warmup}_alpha:{args.alpha}_numops:{args.num_ops}_magnitude:{args.magnitude}"
