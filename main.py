@@ -47,6 +47,7 @@ parser.add_argument("--num_classes", type=int)
 parser.add_argument("--num_workers", default=2, type=int)
 parser.add_argument("--seed", default=42, type=int)
 parser.add_argument("--project_name", default='Resic45-ViT', type=str)
+parser.add_argument("--exp_name", type=str)
 args = parser.parse_args()
 torch.manual_seed(args.seed)
 np.random.seed(args.seed)
@@ -187,7 +188,7 @@ def main():
             train_loader = DataLoader(data_train, batch_size=args.batch, shuffle=True, num_workers=args.num_workers)
         val_loader = DataLoader(data_val, batch_size=args.val_batch, shuffle=True, num_workers=args.num_workers)
     
-    # 실행  
+    # 여기ㅌ 실행 ==================================================================================================================  
     elif args.dataset=='resisc45':
         total_img_num = 18900
         args.num_classes = 45
@@ -203,9 +204,11 @@ def main():
         data_val =  datasets.RESISC45(root=args.data_path, split='test', transforms=None, download=True)
         val_loader = DataLoader(data_val, batch_size=args.val_batch, shuffle=True, num_workers=args.num_workers)
     
-    experiment_name = f"{args.model_name}_batch:{args.batch}_lr:{args.lr}_wd:{args.weight_decay}_dropout:{args.dropout}_warmup:{args.warmup}_alpha:{args.alpha}_numops:{args.num_ops}_magnitude:{args.magnitude}"
+    # experiment_name = f"{args.model_name}_batch:{args.batch}_lr:{args.lr}_wd:{args.weight_decay}_dropout:{args.dropout}_warmup:{args.warmup}_alpha:{args.alpha}_numops:{args.num_ops}_magnitude:{args.magnitude}"
+    
     wandb.init(project=args.project_name)
-    wandb.run.name = experiment_name
+    # wandb.run.name = experiment_name
+    wandb.run.name = args.exp_name
     wandb.run.save()
     if args.model_name=='ViT-tiny':
         args.num_layers = 12
@@ -238,7 +241,7 @@ def main():
                                   num_layers=args.num_layers, num_heads=args.num_heads,
                                   hidden_dim=args.hidden_dim, mlp_dim=args.mlp_dim, dropout=args.dropout,
                                   attention_dropout=0.0, num_classes=args.num_classes)
-
+        
         # weights=ViT_B_16_Weights.IMAGENET1K_V1
         # model2 = vit_b_16(weights=weights)
         # for name, param in model2.named_parameters():
