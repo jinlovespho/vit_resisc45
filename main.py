@@ -44,7 +44,7 @@ parser.add_argument("--hidden_dim", default=0, type=int)
 parser.add_argument("--mlp_dim", default=0, type=int)
 parser.add_argument("--dropout", default=0.1, type=float)
 parser.add_argument("--num_classes", type=int)
-parser.add_argument("--num_workers", default=2, type=int)
+parser.add_argument("--num_workers", default=8, type=int)
 parser.add_argument("--seed", default=42, type=int)
 parser.add_argument("--project_name", default='Resic45-ViT', type=str)
 parser.add_argument("--exp_name", type=str)
@@ -188,7 +188,7 @@ def main():
             train_loader = DataLoader(data_train, batch_size=args.batch, shuffle=True, num_workers=args.num_workers)
         val_loader = DataLoader(data_val, batch_size=args.val_batch, shuffle=True, num_workers=args.num_workers)
     
-    # 여기ㅌ 실행 ==================================================================================================================  
+    # 여기 실행 ==================================================================================================================  
     elif args.dataset=='resisc45':
         total_img_num = 18900
         args.num_classes = 45
@@ -206,11 +206,13 @@ def main():
     
     # experiment_name = f"{args.model_name}_batch:{args.batch}_lr:{args.lr}_wd:{args.weight_decay}_dropout:{args.dropout}_warmup:{args.warmup}_alpha:{args.alpha}_numops:{args.num_ops}_magnitude:{args.magnitude}"
     
-    wandb.init(project=args.project_name)
+    wandb.init(project=args.project_name,
+               name = args.exp_name
+               )
     # wandb.run.name = experiment_name
-    wandb.run.name = args.exp_name
-    wandb.run.save()
-    if args.model_name=='ViT-tiny':
+    # wandb.run.name = args.exp_name
+    # wandb.run.save()
+    if args.model_name=='ViT-tiny':     
         args.num_layers = 12
         args.num_heads = 3
         args.hidden_dim = 192
@@ -263,6 +265,7 @@ def main():
         # model.load_state_dict(weights.get_state_dict(progress=True, check_hash=True))
 
 
+        # breakpoint()
         optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay, eps=args.eps)
         if args.label_smoothing:
             criterion = LabelSmoothingCrossEntropyLoss(args.num_classes, smoothing=args.smoothing)

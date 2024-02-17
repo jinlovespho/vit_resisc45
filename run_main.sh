@@ -1,17 +1,17 @@
 #!/bin/bash
 
-PROJ_NAME="Resic45-ViT_hyp_search"
+PROJ_NAME="20240214_Resic45-ViT_hyp_search"
 
-vit_type="ViT-base"
+vit_type="ViT-small"     # ViT-tiny, ViT-small, ViT-base, ViT-large, ViT-huge 중에서 선택 
 
 batch_sizes=(64)
-learning_rates=(5e-4)   # 5e-4 3e-4 1e-4
+learning_rates=(1e-3 5e-4)   # 5e-4 3e-4 1e-4
 # num_layers=(8)
 # heads=(8)
 # hiddens=(384)
 # mlp_hiddens=(384)
-weight_decays=(1e-4 3e-4)
-dropouts=(0.2 0.1)
+weight_decays=(1e-4 1e-5)
+dropouts=(0.1 0.2)
 alphas=(0.1 0.2 0.5)
 num_opss=(2 4)
 magnitudes=(5 10 15 20)
@@ -42,7 +42,6 @@ do
                                                                             --dataset resisc45 \
                                                                             --label-smoothing \
                                                                             --mixup \
-                                                                            --randaugment \
                                                                             --weight_decay ${wd} \
                                                                             --dropout ${drop} \
                                                                             --alpha ${alp} \
